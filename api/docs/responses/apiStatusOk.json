@@ -1,0 +1,37 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+
+    "title": "API Status OK",
+
+    "type": "object",
+    "properties": {
+        "_links": {
+            "type": "object",
+            "title": "HAL Links",
+
+            "properties": {
+                "self": {
+                    "$ref": "./../common/hal-link.json"
+                }
+            },
+
+            "additionalItems": {
+                "$ref": "./../common/hal-link.json"
+            }
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": ["OK", "Degraded", "Down"]
+                },
+                "version": {
+                    "type": "string",
+                    "example": "1.0.0"
+                }
+            }
+        }
+        
+    }
+}

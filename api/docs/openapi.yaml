@@ -1,0 +1,52 @@
+openapi: '3.1.0'
+info:
+  title: Worldbuild
+  version: '1.0'
+servers:
+  - url: https://api.worldbuild.localhost/
+paths:
+  /:
+    get:
+      operationId: getIndex
+      summary: Get API Status
+      responses:
+        '200':
+          $ref: '#/components/responses/apiStatusOk'
+  
+  /{world}:
+    parameters:
+      - $ref: '#/components/parameters/worldSlug'
+    get:
+      operationId: getWorld
+      summary: Get World
+  
+  /{world}/pages:
+    parameters:
+      - $ref: '#/components/parameters/worldSlug'
+    get:
+      operationId: getWorldPages
+      summary: Get Pages for World
+  
+  /{world}/categories:
+    parameters:
+      - $ref: '#/components/parameters/worldSlug'
+
+components:
+
+  parameters:
+    worldSlug:
+      in: path
+      name: world
+      schema:
+        type: string
+      required: true
+      description: The slug of the world to fetch data for
+  
+  responses:
+    apiStatusOk:
+      description: API Status Response OK
+      content:
+        application/json:
+          schema:
+            $ref: './responses/apiStatusOk.json'
+    

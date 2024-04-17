@@ -1,0 +1,7 @@
+{
+  "name": "worldbuild",
+  "workspaces": [
+    "api",
+    "app"
+  ]
+}

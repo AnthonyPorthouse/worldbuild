@@ -1,0 +1,11 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "HAL Link",
+    "type": "object",
+    "properties": {
+        "href": {
+            "type": "string",
+            "format": "uri"
+        }
+    }
+}
