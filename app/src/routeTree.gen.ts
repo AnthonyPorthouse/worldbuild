@@ -19,6 +19,7 @@ import { Route as WorldPagesSlugImport } from './routes/$world/pages/$slug'
 // Create Virtual Routes
 
 const IndexLazyImport = createFileRoute('/')()
+const AuthLoginIndexLazyImport = createFileRoute('/auth/login/')()
 
 // Create/Update Routes
 
@@ -26,6 +27,13 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const AuthLoginIndexLazyRoute = AuthLoginIndexLazyImport.update({
+  path: '/auth/login/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/auth/login/index.lazy').then((d) => d.Route),
+)
 
 const WorldPagesIndexRoute = WorldPagesIndexImport.update({
   path: '/$world/pages/',
@@ -57,6 +65,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorldPagesIndexImport
       parentRoute: typeof rootRoute
     }
+    '/auth/login/': {
+      preLoaderRoute: typeof AuthLoginIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -66,6 +78,7 @@ export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
   WorldPagesSlugRoute,
   WorldPagesIndexRoute,
+  AuthLoginIndexLazyRoute,
 ])
 
 /* prettier-ignore-end */

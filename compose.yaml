@@ -24,7 +24,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
   studio:
-    image: node:alpine
+    image: node:lts-alpine
     volumes:
       - ./package.json:/app/package.json
       - ./package-lock.json:/app/package-lock.json
@@ -79,7 +79,7 @@ services:
       - PUID=1000
       - PGID=1000
     expose:
-      - 5173
+      - 3000
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.app.rule=Host(`worldbuild.localhost`)"

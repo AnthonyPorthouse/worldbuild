@@ -8,5 +8,6 @@ export default defineConfig({
   cacheDir: "../node_modules/.vite",
   server: {
     host: "0.0.0.0",
+    port: 3000
   },
 });
