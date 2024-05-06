@@ -1,5 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import axios from "axios";
+import { Auth } from "../hooks/useAuth";
 
 type PageWithBlocks = {
   id: string;
@@ -21,12 +22,23 @@ type PageWithBlocks = {
   }[];
 };
 
-const getPageQuery = (world: string, slug: string) => {
+const getPageQuery = (auth: Auth, world: string, slug: string) => {
   return queryOptions({
-    queryKey: [world, "page", slug],
+    queryKey: [auth, world, "page", slug],
     queryFn: async () => {
+      const token = await auth.getTokenOrRefresh();
+
+      if (!token) {
+        throw new Error('Not authenticated');
+      }
+
       const res = await axios.get<PageWithBlocks>(
-        `https://api.worldbuild.localhost/${world}/pages/${slug}`
+        `https://api.worldbuild.localhost/${world}/pages/${slug}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
       );
 
       return res.data;

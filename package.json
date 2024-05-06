@@ -3,5 +3,8 @@
   "workspaces": [
     "api",
     "app"
-  ]
+  ],
+  "scripts": {
+    "certs:gen": "cd .docker/traefik && mkcert worldbuild.localhost *.worldbuild.localhost"
+  }
 }

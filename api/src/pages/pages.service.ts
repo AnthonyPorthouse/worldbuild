@@ -15,8 +15,9 @@ export class PagesService {
     cursor?: Prisma.PageWhereUniqueInput;
     where?: Prisma.PageWhereInput;
     orderBy?: Prisma.PageOrderByWithRelationInput;
+    include?: Prisma.PageInclude;
   }): Promise<Page[]> {
-    const { skip, take, cursor, where, orderBy } = params;
+    const { skip, take, cursor, where, orderBy, include } = params;
 
     return this.db.page.findMany({
       skip,
@@ -24,6 +25,7 @@ export class PagesService {
       cursor,
       where,
       orderBy,
+      include,
     });
   }
 

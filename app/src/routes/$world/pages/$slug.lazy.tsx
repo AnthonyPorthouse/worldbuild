@@ -7,6 +7,7 @@ import { createLazyFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import Block from "../../../components/block";
 import Title from "../../../components/title";
+import useAuth from "../../../hooks/useAuth";
 import updatePageQuery from "../../../queries/updatePageQuery";
 
 export const Route = createLazyFileRoute("/$world/pages/$slug")({
@@ -14,7 +15,9 @@ export const Route = createLazyFileRoute("/$world/pages/$slug")({
 });
 
 function Page() {
+  const { world } = Route.useParams()
   const data = Route.useLoaderData();
+  const auth = useAuth();
 
   const [title, setTitle] = useState(data.title);
   const [blocks, setBlocks] = useState(data.blocks);
@@ -22,9 +25,9 @@ function Page() {
   const queryClient = useQueryClient();
 
   const mutate = useMutation({
-    mutationKey: ["updatePage", data.slug],
+    mutationKey: [auth, "updatePage", world, data.slug],
     mutationFn: async () =>
-      await updatePageQuery(data.slug, {
+      await updatePageQuery(auth, world, data.slug, {
         title,
         blocks: blocks.map((b) => ({
           content: b.content,

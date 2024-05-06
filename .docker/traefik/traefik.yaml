@@ -1,0 +1,7 @@
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /certs/worldbuild.localhost+1.pem
+        keyFile: /certs/worldbuild.localhost+1-key.pem
+        

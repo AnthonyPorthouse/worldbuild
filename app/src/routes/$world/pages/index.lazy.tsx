@@ -12,6 +12,7 @@ function Pages() {
       <h1 className='text-2xl'>Pages</h1>
       <ul>
         {pages.map(({id, title, slug, world}) => <li key={id}><Link to='/$world/pages/$slug' params={{
+          world: world.slug,
           slug
         }}>{title}</Link></li>)}
       </ul>

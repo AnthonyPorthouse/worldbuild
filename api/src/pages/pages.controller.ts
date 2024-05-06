@@ -6,13 +6,16 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAccessAuthGuard } from 'src/auth/jwt-access-auth.guard';
 import { WorldService } from 'src/world/world.service';
 import { CreatePageDto } from './createPage.dto';
 import { PagesService } from './pages.service';
 import { UpdatePageDto } from './updatePage.dto';
 
 @Controller('/:worldId/pages')
+@UseGuards(JwtAccessAuthGuard)
 export class PagesController {
   constructor(
     private readonly pagesService: PagesService,
@@ -25,6 +28,9 @@ export class PagesController {
     return this.pagesService.pages({
       where: { worldId: world.id },
       orderBy: { createdAt: 'desc' },
+      include: {
+        world: true,
+      },
     });
   }
 

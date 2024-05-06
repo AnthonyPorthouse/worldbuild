@@ -1,67 +1,55 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import axios from "axios";
-import { useState } from "react";
+import { User } from "../../../contexts/AuthContext";
+import useAuth from "../../../hooks/useAuth";
 
 export const Route = createLazyFileRoute("/auth/login/")({
   component: Login,
 });
 
 function Login() {
-
-  const [token, setToken] = useState<string>();
-  const [refreshToken, setRefreshToken] = useState<string>();
-  const [user, setUser] = useState();
+  const auth = useAuth();
+  const navigate = useNavigate();
 
   const mutation = useMutation({
-    mutationKey: ['login'],
-    mutationFn: async ({email, password}: {email: string, password: string}) => {
-      const res = await axios.post<{access_token: string, refresh_token: string}>('https://api.worldbuild.localhost/auth/login', {
+    mutationKey: ["login"],
+    mutationFn: async ({
+      email,
+      password,
+    }: {
+      email: string;
+      password: string;
+    }) => {
+      const res = await axios.post<{
+        access_token: string;
+        refresh_token: string;
+      }>("https://api.worldbuild.localhost/auth/login", {
         email,
         password,
       });
 
-      setToken(res.data.access_token);
-      setRefreshToken(res.data.refresh_token);
+      auth.setAccessToken(res.data.access_token);
+      auth.setRefreshToken(res.data.refresh_token);
 
-      const userRes = await axios.get('https://api.worldbuild.localhost/auth/me', {
-        headers: {
-          Authorization: `Bearer ${res.data.access_token}`,
+      const userRes = await axios.get<User>(
+        "https://api.worldbuild.localhost/auth/me",
+        {
+          headers: {
+            Authorization: `Bearer ${res.data.access_token}`,
+          },
         }
-      });
+      );
 
       return userRes.data;
     },
     onSuccess: (data) => {
-      setUser(data);
-    }
-  })
-
-  const refreshMutation = useMutation({
-    mutationKey: ['refresh', refreshToken],
-    mutationFn: async () => {
-      const res = await axios.post<{access_token: string, refresh_token: string}>('https://api.worldbuild.localhost/auth/refresh', null, {
-        headers: {
-          Authorization: `Bearer ${refreshToken}`
-        }
-      });
-
-      setToken(res.data.access_token);
-      setRefreshToken(res.data.refresh_token);
-
-      const userRes = await axios.get('https://api.worldbuild.localhost/auth/me', {
-        headers: {
-          Authorization: `Bearer ${res.data.access_token}`,
-        }
-      });
-
-      return userRes.data;
+      auth.setUser(data);
+      navigate({ to: '/' })
     },
-    onSuccess: (data) => {
-      setUser(data);
-    }
-  })
+  });
+
 
   const loginForm = useForm({
     defaultValues: {
@@ -70,8 +58,7 @@ function Login() {
     },
 
     onSubmit: async ({ value }) => {
-      console.log(value);
-      return await mutation.mutateAsync(value)
+      return await mutation.mutateAsync(value);
     },
   });
 
@@ -88,7 +75,7 @@ function Login() {
           }}
           className="flex flex-col gap-4"
         >
-            <div className="flex flex-col">
+          <div className="flex flex-col">
             <loginForm.Field
               name="email"
               children={(field) => (
@@ -129,18 +116,6 @@ function Login() {
           <div>
             <button>Log In</button>
           </div>
-
-          <div><button onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-
-            refreshMutation.mutateAsync();
-          } }>Refresh</button></div>
-
-          {user && <div>
-            {user.email} <br />
-            {user.refreshToken}
-            </div>} 
         </form>
       </div>
     </div>

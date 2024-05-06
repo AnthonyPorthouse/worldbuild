@@ -1,11 +1,23 @@
 import { QueryClient } from "@tanstack/react-query";
-import { Link, Outlet, createRootRouteWithContext } from "@tanstack/react-router";
+import {
+  Link,
+  Outlet,
+  createRootRouteWithContext,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+import useAuth from "../hooks/useAuth";
 
 export const Route = createRootRouteWithContext<{
-  queryClient: QueryClient
+  queryClient: QueryClient;
+  auth: ReturnType<typeof useAuth>
 }>()({
-  component: () => (
+  component: RootRoute,
+});
+
+function RootRoute() {
+  const auth = useAuth();
+
+  return (
     <>
       <a href="#content" className="sr-only focus:not-sr-only">
         Jump to Content
@@ -13,10 +25,21 @@ export const Route = createRootRouteWithContext<{
       <div className="flex flex-col gap-4">
         <nav className="text-xl bg-slate-200 drop-shadow-lg">
           <ul className="container mx-auto py-4 flex gap-2">
-            <li className="font-bold"><Link to="/">WorldBuild</Link></li>
-            {/* <li>
-              <Link to="/pages">Pages</Link>
-            </li> */}
+            <li className="font-bold">
+              <Link to="/">WorldBuild</Link>
+            </li>
+            {!auth.isAuthenticated() && (
+              <li>
+                <Link to="/auth/login">Login</Link>
+              </li>
+            )}
+            {auth.isAuthenticated() && <li> {auth.user?.email}</li>}
+            {auth.isAuthenticated() && <li> <button onClick={() => {
+              auth.setUser();
+              auth.setAccessToken();
+              auth.setRefreshToken()
+            }}>Log out</button> </li>}
+
           </ul>
         </nav>
 
@@ -27,5 +50,5 @@ export const Route = createRootRouteWithContext<{
 
       <TanStackRouterDevtools />
     </>
-  ),
-});
+  );
+}

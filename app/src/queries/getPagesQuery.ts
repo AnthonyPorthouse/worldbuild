@@ -1,5 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import axios from "axios";
+import { Auth } from "../hooks/useAuth";
 
 type Page = {
   id: string;
@@ -15,12 +16,23 @@ type Page = {
   };
 };
 
-const getPagesQuery = (world: string) =>
+const getPagesQuery = (auth: Auth, world: string) =>
   queryOptions({
-    queryKey: [world, "pages"],
+    queryKey: [auth, world, "pages"],
     queryFn: async () => {
+      const token = await auth.getTokenOrRefresh();
+
+      if (!token) {
+        throw new Error('Not authenticated');
+      }
+
       const res = await axios.get<Page[]>(
-        `https://api.worldbuild.localhost/${world}/pages`
+        `https://api.worldbuild.localhost/${world}/pages`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        }
       );
 
       return res.data;
