@@ -2,6 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import axios from "axios";
+import { Helmet } from "react-helmet-async";
 import { User } from "../../../contexts/AuthContext";
 import useAuth from "../../../hooks/useAuth";
 
@@ -39,17 +40,16 @@ function Login() {
           headers: {
             Authorization: `Bearer ${res.data.access_token}`,
           },
-        }
+        },
       );
 
       return userRes.data;
     },
     onSuccess: (data) => {
       auth.setUser(data);
-      navigate({ to: '/' })
+      navigate({ to: "/" });
     },
   });
-
 
   const loginForm = useForm({
     defaultValues: {
@@ -64,6 +64,10 @@ function Login() {
 
   return (
     <div className="flex justify-center align-middle">
+      <Helmet>
+        <title>Log In - WorldBuild</title>
+      </Helmet>
+
       <div className="border rounded-lg px-8 py-6 text-lg flex flex-col gap-4 w-4/12">
         <h1 className="text-2xl">Log In</h1>
 

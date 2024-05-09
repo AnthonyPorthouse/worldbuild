@@ -1,10 +1,15 @@
 import { DndContext, DragEndEvent, DragOverlay } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-import { SortableContext, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import Block from "../../../components/block";
 import Title from "../../../components/title";
 import useAuth from "../../../hooks/useAuth";
@@ -15,7 +20,7 @@ export const Route = createLazyFileRoute("/$world/pages/$slug")({
 });
 
 function Page() {
-  const { world } = Route.useParams()
+  const { world } = Route.useParams();
   const data = Route.useLoaderData();
   const auth = useAuth();
 
@@ -44,10 +49,10 @@ function Page() {
       ...blocks,
       { id: new Date().toISOString(), content: "", revealed: false },
     ]);
-  };
+  }
 
   function handleDragEnd(event: DragEndEvent) {
-    const {active, over} = event;
+    const { active, over } = event;
 
     if (over && active.id !== over.id) {
       setBlocks((blocks) => {
@@ -65,11 +70,15 @@ function Page() {
       newBlocks[index] = { id: blocks[index].id, content, revealed };
 
       setBlocks(newBlocks);
-    }
+    };
   }
 
   return (
     <div className="flex flex-col gap-4">
+      <Helmet>
+        <title>{title} - WorldBuild</title>
+      </Helmet>
+
       <Title title={title} onUpdate={(title: string) => setTitle(title)} />
 
       <DndContext
@@ -77,7 +86,10 @@ function Page() {
         onDragEnd={handleDragEnd}
       >
         <article>
-          <SortableContext items={blocks} strategy={verticalListSortingStrategy}>
+          <SortableContext
+            items={blocks}
+            strategy={verticalListSortingStrategy}
+          >
             {blocks.map(({ id, content, revealed }, i) => (
               <Block
                 key={id}
@@ -89,9 +101,7 @@ function Page() {
               </Block>
             ))}
           </SortableContext>
-          <DragOverlay>
-            {}
-          </DragOverlay>
+          <DragOverlay>{}</DragOverlay>
         </article>
       </DndContext>
 

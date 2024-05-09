@@ -1,21 +1,26 @@
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 import {
   Link,
   Outlet,
   createRootRouteWithContext,
+  useNavigate,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import useAuth from "../hooks/useAuth";
+import getUserQuery from "../queries/getUserQuery";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
-  auth: ReturnType<typeof useAuth>
+  auth: ReturnType<typeof useAuth>;
 }>()({
   component: RootRoute,
 });
 
 function RootRoute() {
   const auth = useAuth();
+
+  useQuery(getUserQuery(auth));
+  const navigate = useNavigate();
 
   return (
     <>
@@ -34,12 +39,22 @@ function RootRoute() {
               </li>
             )}
             {auth.isAuthenticated() && <li> {auth.user?.email}</li>}
-            {auth.isAuthenticated() && <li> <button onClick={() => {
-              auth.setUser();
-              auth.setAccessToken();
-              auth.setRefreshToken()
-            }}>Log out</button> </li>}
+            {auth.isAuthenticated() && (
+              <li>
+                {" "}
+                <button
+                  onClick={() => {
+                    auth.setUser();
+                    auth.setAccessToken();
+                    auth.setRefreshToken();
 
+                    navigate({ to: "/" });
+                  }}
+                >
+                  Log out
+                </button>{" "}
+              </li>
+            )}
           </ul>
         </nav>
 
