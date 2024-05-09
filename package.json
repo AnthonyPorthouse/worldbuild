@@ -5,6 +5,18 @@
     "app"
   ],
   "scripts": {
-    "certs:gen": "cd .docker/traefik && mkcert worldbuild.localhost *.worldbuild.localhost"
+    "certs:gen": "cd .docker/traefik && mkcert worldbuild.localhost *.worldbuild.localhost",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "package.json": [
+      "npx -y sort-package-json"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2"
   }
 }
